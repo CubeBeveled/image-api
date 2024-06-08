@@ -81,7 +81,7 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   font_size = 100
   font = ImageFont.truetype(font_path, size=font_size)
 
-  top_text_position = (total_width / 2, total_height / 2 - 400)
+  top_text_position = (total_width / 2, total_height - total_height / 1.1)
   bottom_text_position = (total_width / 2, total_height - 200)
   
   # Draw top text
@@ -113,4 +113,4 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   return buffer
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=False, port=25003)
+  app.run(host="0.0.0.0", debug=True, port=25003)
