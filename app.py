@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/welcomecard', methods=["GET"])
+@app.route("/welcomecard", methods=["GET"])
 def generate_image():
   text1 = request.args.get("text1")
   text2 = request.args.get("text2")
@@ -16,7 +16,7 @@ def generate_image():
   
   print(f"Generating welcome card...")
   
-  return send_file(generate_welcome_image(text1, text2, background, avatar), mimetype='image/png')
+  return send_file(generate_welcome_image(text1, text2, background, avatar), mimetype="image/png")
 
 def generate_welcome_image(top_text, bottom_text, background, avatar):
   # Get background
@@ -81,8 +81,8 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   font_size = 100
   font = ImageFont.truetype(font_path, size=font_size)
 
-  top_text_position = (total_width / 2, (total_height / 2) - 400)
-  bottom_text_position = (total_width / 2, (total_height / 2) + 300)
+  top_text_position = (total_width / 2, total_height / 2 - 400)
+  bottom_text_position = (total_width / 2, total_height - 200)
   
   # Draw top text
   draw.text(
