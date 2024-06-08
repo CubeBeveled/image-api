@@ -9,16 +9,16 @@ app = Flask(__name__)
 
 @app.route('/welcomecard', methods=["GET"])
 def generate_image():
-  username = request.args.get("username")
-  server = request.args.get("server")
+  text1 = request.args.get("text1")
+  text2 = request.args.get("text2")
   background = request.args.get("background")
   avatar = request.args.get("avatar")
   
-  print(f"Generating welcome card for user {username} in server {server}")
+  print(f"Generating welcome card...")
   
-  return generate_welcome_image(username, server, background, avatar)
+  return send_file(generate_welcome_image(text1, text2, background, avatar), mimetype='image/png')
 
-def generate_welcome_image(username, server, background, avatar):
+def generate_welcome_image(top_text, bottom_text, background, avatar):
   # Get background
   try:
     response = requests.get(background)
@@ -80,8 +80,6 @@ def generate_welcome_image(username, server, background, avatar):
 
   font_size = 100
   font = ImageFont.truetype(font_path, size=font_size)
-  top_text = f"Welcome {username}"
-  bottom_text = f"to {server}"
 
   top_text_position = (total_width / 2, (total_height / 2) - 400)
   bottom_text_position = (total_width / 2, (total_height / 2) + 300)
@@ -112,7 +110,7 @@ def generate_welcome_image(username, server, background, avatar):
   image.save(buffer, format='PNG')
   buffer.seek(0)
 
-  return send_file(buffer, mimetype='image/png')
+  return buffer
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=False, port=25003)
