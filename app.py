@@ -23,7 +23,7 @@ def generate_image():
   return send_file(generate_welcome_image(text1, text2, background, avatar), mimetype="image/png")
 
 def generate_welcome_image(top_text, bottom_text, background, avatar):
-  # Get background
+  print("- Getting background...")
   try:
     response = requests.get(background)
     response.raise_for_status()
@@ -36,7 +36,7 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
     background_color = (73, 109, 137)
     image = Image.new('RGB', (total_width, total_height), color=background_color)
 
-  # Get avatar
+  print("- Getting avatar...")
   try:
     response = requests.get(avatar)
     response.raise_for_status()
@@ -64,7 +64,7 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
     except RequestException as e:
       print(f"Error downloading default avatar image: {e}")
     
-
+  print("- Drawing")
   # Path to the font file
   font_path = os.path.join(os.path.dirname(__file__), "fonts", "Roboto-Black.ttf")
 
@@ -105,8 +105,9 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   buffer = BytesIO()
   image.save(buffer, format="PNG")
   buffer.seek(0)
-
+  
+  print("- Done")
   return buffer
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=True, port=25265)
+  app.run(host="0.0.0.0", debug=False, port=25265)
