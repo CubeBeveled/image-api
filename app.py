@@ -48,12 +48,19 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   else:
     # If an avatar is specified
     try:
+      print("Getting pfp")
       response = requests.get(avatar)
       response.raise_for_status()
       avatar = Image.open(BytesIO(response.content))
       
       avatar_width, avatar_height = avatar.size
       avatar_position = (int((total_width - avatar_width) // 2), int((total_height - avatar_height) // 2))
+      
+      mask = Image.new('L', (avatar_width, avatar_height), 0)
+      maskDraw = ImageDraw.Draw(mask)
+      maskDraw.ellipse((0, 0, avatar_width, avatar_height), fill=255)
+      
+      image.paste(avatar, avatar_position, mask)
     except RequestException as e:
       # If retrieving the image fails
       print(f"Error downloading avatar image: {e}")
@@ -113,4 +120,4 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   return buffer
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=False, port=25003)
+  app.run(host="0.0.0.0", debug=True, port=25265)
