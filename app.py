@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from io import BytesIO
 import requests
 from requests.exceptions import RequestException
@@ -27,44 +27,50 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   try:
     response = requests.get(background)
     response.raise_for_status()
-    image = Image.open(BytesIO(response.content))
-    total_width, total_height = image.size
+    background = Image.open(BytesIO(response.content))
+    total_width, total_height = background.size
   except RequestException as e:
     print(f"Error downloading background image: {e}")
-    # Use a default solid color image if the background image can't be downloaded
+    # Use a solid color image if the background image can't be downloaded
     total_width, total_height = 1920, 1080
     background_color = (73, 109, 137)
-    image = Image.new('RGB', (total_width, total_height), color=background_color)
+    background = Image.new("RGBA", (total_width, total_height), color=background_color)
 
   print("- Getting avatar...")
   try:
     response = requests.get(avatar)
     response.raise_for_status()
     avatar = Image.open(BytesIO(response.content))
-    
-    avatar_width, avatar_height = avatar.size
-    avatar_position = (int((total_width - avatar_width) // 2), int((total_height - avatar_height) // 2))
-    
-    mask = Image.new('L', (avatar_width, avatar_height), 0)
-    maskDraw = ImageDraw.Draw(mask)
-    maskDraw.ellipse((0, 0, avatar_width, avatar_height), fill=255)
-    
-    image.paste(avatar, avatar_position, mask)
   except RequestException as e:
     # If retrieving the image fails
     print(f"Error downloading avatar image: {e}")
     
+    # Apply fallback image
     try:
       response = requests.get(fallback_avatar)
       response.raise_for_status()
       avatar = Image.open(BytesIO(response.content))
-      
-      avatar_width, avatar_height = avatar.size
-      avatar_position = (int((total_width - avatar_width) / 2), int((total_height - avatar_height) / 2))
     except RequestException as e:
       print(f"Error downloading default avatar image: {e}")
-    
+  
+  # Get avatar size and apply it
+  avatar_size_ratio = 0.3 
+  avatar_size = (int(min(total_width, total_height) * avatar_size_ratio),) * 2
+  avatar = ImageOps.fit(avatar, avatar_size, centering=(0.5, 0.5))
+  
+  # Define dimensions and position
+  avatar_width, avatar_height = avatar.size
+  avatar_position = (int((total_width - avatar_width) / 2), int((total_height - avatar_height) / 2))
+  
+  # Make the circular mask
+  avatar_mask = Image.new("L", (avatar_width, avatar_height), 0)
+  maskDraw = ImageDraw.Draw(avatar_mask)
+  maskDraw.ellipse((0, 0, avatar_width, avatar_height), fill=255)
+  
   print("- Drawing")
+  # Paste (applying mask)
+  background.paste(avatar, avatar_position, avatar_mask)
+  
   # Path to the font file
   font_path = os.path.join(os.path.dirname(__file__), "fonts", "Roboto-Black.ttf")
 
@@ -72,11 +78,14 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   if not os.path.exists(font_path):
     raise OSError(f"Font file not found: {font_path}")
 
-  draw = ImageDraw.Draw(image)
+  draw = ImageDraw.Draw(background)
 
-  font_size = int(min(total_width, total_height) * 0.15)
+  # Define font
+  font_size_ratio = 0.15
+  font_size = int(min(total_width, total_height) * font_size_ratio)
   font = ImageFont.truetype(font_path, size=font_size)
 
+  # Define the positions of the text
   top_text_position = (total_width / 2, total_height / 4)
   bottom_text_position = (total_width / 2, (total_height / 4) + (total_height / 2))
   
@@ -102,8 +111,9 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
     anchor="mt"
   )
 
+  # Convert to buffer
   buffer = BytesIO()
-  image.save(buffer, format="PNG")
+  background.save(buffer, format="PNG")
   buffer.seek(0)
   
   print("- Done")
