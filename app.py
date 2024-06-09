@@ -120,4 +120,4 @@ def generate_welcome_image(top_text, bottom_text, background, avatar):
   return buffer
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=True, port=25265)
+  app.run(host="0.0.0.0", debug=False, port=25265)
