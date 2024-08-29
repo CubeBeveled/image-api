@@ -1,12 +1,11 @@
-from flask import Flask, request, send_file, redirect
-from endpoints import wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges
+from flask import Flask, request, send_file, redirect, json
+from endpoints import wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges, randommath
 
 fallback_avatar = "https://bevels-files.vercel.app/discordblue.png"
 app = Flask(__name__)
 
 @app.route("/welcomecard", methods=["GET"])
 def generate_image():
-  
   text1 = request.args.get("text1")
   text2 = request.args.get("text2")
   background_url = request.args.get("background")
@@ -100,7 +99,6 @@ def generate_contour():
 
 @app.route("/find_edges", methods=["GET"])
 def generate_edge():
-  
   image_url = request.args.get("image")
   cycles = request.args.get("cycles")
   
@@ -113,6 +111,10 @@ def generate_edge():
   print(f"Generating edged image ({cycles}x)")
   
   return send_file(find_edges.generate(image_url, cycles), mimetype="image/png")
+
+@app.route("/random_math", methods=["GET"])
+def generate_math():
+  return randommath.generate()
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=False, port=25265)
