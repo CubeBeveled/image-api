@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file, redirect, json
-from endpoints import wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges, randommath
+from endpoints import random_math, random_word, wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges, random_sentence
 
 fallback_avatar = "https://bevels-files.vercel.app/discordblue.png"
 app = Flask(__name__)
@@ -11,7 +11,7 @@ def generate_image():
   background_url = request.args.get("background")
   avatar_url = request.args.get("avatar")
   
-  if text1 == None and text2 == None:
+  if text1 == None or text2 == None or avatar_url == None or background_url == None:
     redirect(f"/welcomecard?background=https://cdn.modrinth.com/data/LMIZZNxZ/images/bd57c68a400e0722bc7132575ea7cec66ca529ab.png&text1=Welcome&text2=John Doe&avatar={fallback_avatar}")
     return
   
@@ -114,7 +114,20 @@ def generate_edge():
 
 @app.route("/random_math", methods=["GET"])
 def generate_math():
-  return randommath.generate()
+  return random_math.generate()
+
+@app.route("/random_word", methods=["GET"])
+def generate_word():
+  return random_word.generate()
+
+@app.route("/random_sentence", methods=["GET"])
+def generate_sentence():
+  length = request.args.get("length")
+  
+  if length == None or length == 0:
+    return redirect(f"/random_sentence?length=5")
+  else:
+    return random_sentence.generate(length)
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=False, port=25265)
+  app.run(host="0.0.0.0", debug=False, port=10000)
