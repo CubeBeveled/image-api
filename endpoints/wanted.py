@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageOps
+from flask import send_file
 from io import BytesIO
 import requests
 from requests.exceptions import RequestException
@@ -53,4 +54,4 @@ def generate(avatar, fallback_avatar):
   buffer.seek(0)
   
   print("- Done")
-  return buffer
+  return send_file(buffer, mimetype="image/png")

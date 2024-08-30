@@ -1,4 +1,5 @@
 from PIL import Image, ImageFilter
+from flask import send_file
 from io import BytesIO
 import requests
 from requests.exceptions import RequestException
@@ -19,4 +20,4 @@ def generate(image_url, cycles):
   image.save(buffer, format="PNG")
   buffer.seek(0)
   
-  return buffer
+  return send_file(buffer, mimetype="image/png")

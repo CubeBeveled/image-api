@@ -31,7 +31,7 @@ def generate_wanted():
   
   print(f"Generating wanted card...")
   
-  return send_file(wanted.generate(avatar_url, fallback_avatar), mimetype="image/png")
+  return wanted.generate(avatar_url, fallback_avatar)
 
 @app.route("/sharpen", methods=["GET"])
 def generate_sharp():
@@ -47,7 +47,7 @@ def generate_sharp():
   
   print(f"Generating sharpened image ({cycles}x)")
   
-  return send_file(sharpen.generate(image_url, cycles), mimetype="image/png")
+  return sharpen.generate(image_url, cycles)
 
 @app.route("/smooth", methods=["GET"])
 def generate_smooth():
@@ -63,7 +63,7 @@ def generate_smooth():
   
   print(f"Generating smoothed image ({cycles}x)")
   
-  return send_file(smooth.generate(image_url, cycles), mimetype="image/png")
+  return smooth.generate(image_url, cycles)
 
 @app.route("/edge_enhance", methods=["GET"])
 def generate_enhanced():
@@ -79,7 +79,7 @@ def generate_enhanced():
   
   print(f"Generating enhanced image ({cycles}x)")
   
-  return send_file(enhance.generate(image_url, cycles), mimetype="image/png")
+  return enhance.generate(image_url, cycles)
 
 @app.route("/contour", methods=["GET"])
 def generate_contour():
@@ -95,7 +95,7 @@ def generate_contour():
   
   print(f"Generating contoured image ({cycles}x)")
   
-  return send_file(contour.generate(image_url, cycles), mimetype="image/png")
+  return contour.generate(image_url, cycles)
 
 @app.route("/find_edges", methods=["GET"])
 def generate_edge():
@@ -110,7 +110,7 @@ def generate_edge():
   
   print(f"Generating edged image ({cycles}x)")
   
-  return send_file(find_edges.generate(image_url, cycles), mimetype="image/png")
+  return find_edges.generate(image_url, cycles)
 
 @app.route("/random_math", methods=["GET"])
 def generate_math():
