@@ -7,6 +7,7 @@ from requests.exceptions import RequestException
 
 def generate(top_text, bottom_text, background_url, avatar, fallback_avatar):
   print("- Getting background...")
+  
   try:
     response = requests.get(background_url)
     response.raise_for_status()
