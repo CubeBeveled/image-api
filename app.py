@@ -19,7 +19,7 @@ def generate_image():
   
   print(f"Generating welcome card...")
   
-  return send_file(welcomecard.generate(text1, text2, background_url, avatar_url, fallback_avatar), mimetype="image/png")
+  return welcomecard.generate(text1, text2, background_url, avatar_url, fallback_avatar)
 
 @app.route("/wanted", methods=["GET"])
 def generate_wanted():

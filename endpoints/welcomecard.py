@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+from flask import Response, stream_with_context
 from io import BytesIO
 import requests
 import os
@@ -95,10 +96,10 @@ def generate(top_text, bottom_text, background_url, avatar, fallback_avatar):
     anchor="mt"
   )
 
-  # Convert to buffer
-  buffer = BytesIO()
-  background.save(buffer, format="PNG")
-  buffer.seek(0)
+  print("- Sending stream")
+  # Save the modified image to a BytesIO object
+  stream = BytesIO()
+  background.save(stream, format='PNG')
   
-  print("- Done")
-  return buffer
+  stream.seek(0)
+  return Response(stream_with_context(stream.read(1024)), mimetype='image/png', content_type='image/png')
