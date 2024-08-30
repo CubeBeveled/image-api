@@ -11,7 +11,7 @@ def generate_image():
   background_url = request.args.get("background")
   avatar_url = request.args.get("avatar")
   
-  if text1 == None or text2 == None or avatar_url == None or background_url == None:
+  if text1 == None or text2 == None or background_url == None:
     return redirect(f"/welcomecard?background=https://cdn.modrinth.com/data/LMIZZNxZ/images/bd57c68a400e0722bc7132575ea7cec66ca529ab.png&text1=Welcome&text2=John Doe&avatar={fallback_avatar}")
   
   if avatar_url == None:
