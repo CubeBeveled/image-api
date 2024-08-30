@@ -5,7 +5,7 @@ from requests.exceptions import RequestException
 
 def generate(text):
   try:
-    response = requests.get("https://bevels-files.vercel.app/caution.png")
+    response = requests.get("https://bevels-files.vercel.app/caution.png", stream=True)
     response.raise_for_status()
     background = Image.open(BytesIO(response.content))
     total_width, total_height = background.size

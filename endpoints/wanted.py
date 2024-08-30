@@ -6,7 +6,7 @@ from requests.exceptions import RequestException
 def generate(avatar, fallback_avatar):
   print("- Getting background...")
   try:
-    response = requests.get("https://bevels-files.vercel.app/wanted.png")
+    response = requests.get("https://bevels-files.vercel.app/wanted.png", stream=True)
     response.raise_for_status()
     background = Image.open(BytesIO(response.content))
     total_width, total_height = background.size
@@ -15,7 +15,7 @@ def generate(avatar, fallback_avatar):
 
   print("- Getting avatar...")
   try:
-    response = requests.get(avatar)
+    response = requests.get(avatar, stream=True)
     response.raise_for_status()
     avatar = Image.open(BytesIO(response.content))
   except RequestException as e:
@@ -24,7 +24,7 @@ def generate(avatar, fallback_avatar):
     
     # Apply fallback image
     try:
-      response = requests.get(fallback_avatar)
+      response = requests.get(fallback_avatar, stream=True)
       response.raise_for_status()
       avatar = Image.open(BytesIO(response.content))
     except RequestException as e:

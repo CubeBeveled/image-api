@@ -5,7 +5,7 @@ from requests.exceptions import RequestException
 
 def generate(image_url, cycles):
   try:
-    response = requests.get(image_url)
+    response = requests.get(image_url, stream=True)
     response.raise_for_status()
     image = Image.open(BytesIO(response.content))
     
