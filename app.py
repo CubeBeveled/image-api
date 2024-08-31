@@ -5,6 +5,14 @@ from endpoints import random_math, random_word, wanted, welcomecard, sharpen, sm
 fallback_avatar = "https://bevels-files.vercel.app/discordblue.png"
 app = Flask(__name__)
 
+@app.route("/", methods=["GET"])
+def index():
+  return send_file("public/index.html")
+
+@app.route("/styles.css", methods=["GET"])
+def styles():
+  return send_file("public/styles.css")
+
 @app.route("/welcomecard", methods=["GET"])
 def generate_image():
   text1 = request.args.get("text1")

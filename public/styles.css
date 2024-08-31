@@ -1,0 +1,36 @@
+body {
+  font-family: Roboto, Arial;
+  background-color: rgb(47, 47, 47);
+  color: rgb(221, 221, 221);
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(255, 239, 219);
+}
+
+div {
+  margin: 3vw;
+}
+
+code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 90%;
+  white-space: break-spaces;
+  background-color: #6e768166;
+  border-radius: 6px;
+}
+
+/*
+TITLE
+*/
+
+.description {
+  margin-left: 40px;
+}
+
+.endpoint {
+  margin-left: 20px;
+}
