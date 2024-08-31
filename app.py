@@ -3,14 +3,14 @@ from flask import Flask, request, send_file, redirect
 from endpoints import random_math, random_word, wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges, random_sentence
 
 fallback_avatar = "https://bevels-files.vercel.app/discordblue.png"
-app = Flask(__name__)
+app = Flask("Useless API")
 
 @app.route("/", methods=["GET"])
-def index():
+def get_index():
   return send_file("public/index.html")
 
 @app.route("/styles.css", methods=["GET"])
-def styles():
+def get_styles():
   return send_file("public/styles.css")
 
 @app.route("/welcomecard", methods=["GET"])
