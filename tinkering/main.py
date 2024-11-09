@@ -1,29 +1,42 @@
-from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 import numpy as np
 import random
 import os
 
-from utils import set_pixel, is_white, is_black, random_boolean, Filters, find_nearest, get_distance, get_similar_color
+from utils import set_pixel, is_white, is_black, random_boolean, Filters, find_nearest, get_distance, get_similar_color, video_from_image_sequence
 
-image_name = "test5.png"
-filter = Filters.GLITCHY_CONSTANT
-fireflies_min_distance = 10
+# General settings
+image_path = "test5.png"
+image_color_space = "RGB"
+filter = Filters.GLITCHY_CONSTANT_DOWN_ON_BLACK
 log_progress = True
-animate = True
 
-image = Image.open(image_name)
+# Fireflies settings
+fireflies_min_distance = 10
 
-image = image.convert("RGB")
-image_array = np.array(image)
-height, width, channels = image_array.shape
-total_pixels = width * height
+# Animation settings
+animate = False
+modifications_per_frame = 1000
+frame_output_folder = "frames"
+output_filename = "animation.mp4"
+output_framerate = 30
+
+image = Image.open(image_path) # Load the image
+image = image.convert(image_color_space) # Convert the image to a set color space
+image_array = np.array(image) # Convert the image to an array
+
+height, width, channels = image_array.shape # Get the size of the image
+total_pixels = width * height # This is a variable so we dont have to calculate it every time when logging pixel progress
 
 modifications = []
-processed_count = 0
-frame_image_index = 0
+processed_pixels_count = 0
 
-# Arrays start at 0
+# Variables used for the animation
+processed_modifications_count = 0
+modifs_per_frame_counter = 0
+frame_index = 0
+
+# Arrays start at 0 cuh
 height -= 1
 width -= 1
 
@@ -71,26 +84,39 @@ for y in range(height):
               modifications.append((y, x, [255, 255, 0]))
     
     if log_progress:
-      processed_count += 1
-      processed_percentage = (processed_count / total_pixels) * 100
+      processed_pixels_count += 1
+      processed_percentage = (processed_pixels_count / total_pixels) * 100
+      
       if processed_percentage % 1 == 0:
         print(f"Processed {processed_percentage}%", end="\r")
 
-print("\nModifying array " + str(len(modifications)))
-if not os.path.exists("frames") and not os.path.isdir("frames"):
-  os.makedirs("frames", exist_ok=True)
+total_modifications = len(modifications)
+print("\nModifying array " + str(total_modifications))
 
-def process_modification(y, x, rgb):
+if not os.path.exists(frame_output_folder) and not os.path.isdir(frame_output_folder):
+  os.makedirs(frame_output_folder, exist_ok=True)
+
+for (y, x, rgb) in modifications: 
   set_pixel(image_array, y, x, rgb)
+  modifs_per_frame_counter += 1
   
   if animate:
-    modified_image = Image.fromarray(image_array)
-    modified_image.save(f"frames/{frame_image_index}")
+    if modifs_per_frame_counter >= modifications_per_frame:
+      modified_image = Image.fromarray(image_array)
+      modified_image.save(f"frames/{frame_index}.png")
+      frame_index += 1
+      modifs_per_frame_counter = 0
+  
+  if log_progress:
+    processed_modifications_count += 1
+    processed_percentage = (processed_modifications_count / total_modifications) * 100
+    
+    if processed_percentage % 1 == 0:
+      print(f"Processed {processed_percentage}%", end="\r")
 
-with ThreadPoolExecutor() as executor:
-  for (y, x, rgb) in modifications:
-    executor.submit(process_modification, y, x, rgb)
-
-print("Showing")
-modified_image = Image.fromarray(image_array)
-if not animate: modified_image.show()
+if animate: 
+  video_from_image_sequence(frame_output_folder, output_filename, output_framerate)
+else:
+  print("\nShowing")
+  modified_image = Image.fromarray(image_array)
+  modified_image.show()

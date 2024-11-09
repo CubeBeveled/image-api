@@ -2,6 +2,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from enum import Enum
 import random
 import math
+import os
+import cv2
 
 def get_distance(point1, point2):
   x1, y1 = point1
@@ -62,7 +64,30 @@ def get_similar_color(rgb, variation=30):
   new_b = max(0, min(255, b + random.randint(-variation, variation)))
   
   return (new_r, new_g, new_b)
-  
+
+# Thanks ChatGPT
+def video_from_image_sequence(image_folder, output_video_path, fps=30):
+  images = sorted([img for img in os.listdir(image_folder) if img.endswith((".png", ".jpg", ".jpeg"))]) # Get a sorted list of image filenames in the folder
+
+  # Load the first image to get the dimensions
+  first_image_path = os.path.join(image_folder, images[0])
+  frame = cv2.imread(first_image_path)
+  height, width, layers = frame.shape
+
+  # Define the video codec and create VideoWriter object
+  fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Use 'XVID' for .avi files
+  video = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
+  # Add each image to the video
+  for image in images:
+    image_path = os.path.join(image_folder, image)
+    frame = cv2.imread(image_path)
+    video.write(frame)
+
+  # Release the video writer
+  video.release()
+  print(f"Saved {output_video_path}")
+
 class Filters(Enum):
   GLITCHY_RANDOM_DOWN = 1
   GLITCHY_CONSTANT = 2
