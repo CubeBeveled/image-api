@@ -1,7 +1,8 @@
-import random
-import os
+from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 import numpy as np
+import random
+import os
 
 from utils import set_pixel, is_white, is_black, random_boolean, Filters, find_nearest, get_distance, get_similar_color
 
@@ -20,7 +21,7 @@ total_pixels = width * height
 
 modifications = []
 processed_count = 0
-image_index = 0
+frame_image_index = 0
 
 # Arrays start at 0
 height -= 1
@@ -76,9 +77,20 @@ for y in range(height):
         print(f"Processed {processed_percentage}%", end="\r")
 
 print("\nModifying array " + str(len(modifications)))
-for (y, x, rgb) in modifications:
+if not os.path.exists("frames") and not os.path.isdir("frames"):
+  os.makedirs("frames", exist_ok=True)
+
+def process_modification(y, x, rgb):
   set_pixel(image_array, y, x, rgb)
+  
+  if animate:
+    modified_image = Image.fromarray(image_array)
+    modified_image.save(f"frames/{frame_image_index}")
+
+with ThreadPoolExecutor() as executor:
+  for (y, x, rgb) in modifications:
+    executor.submit(process_modification, y, x, rgb)
 
 print("Showing")
 modified_image = Image.fromarray(image_array)
-modified_image.show()
+if not animate: modified_image.show()
