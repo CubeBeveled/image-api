@@ -17,11 +17,11 @@ def set_pixel(image_array, y, x, rgb):
 def get_pixel(image_array, y, x):
   return image_array[y, x]
 
-def is_black(rgb, threshold = 20):
+def is_black(rgb, threshold = 20): # Higher the threshold, the more gray colors it includes
   return rgb[0] < threshold and rgb[1] < threshold and rgb[2] < threshold
 
-def is_white(rgb):
-  return rgb[0] > 200 and rgb[1] > 200 and rgb[2] > 200
+def is_white(rgb, threshold = 200): # Lower the threshold, the more gray colors it includes
+  return rgb[0] > threshold and rgb[1] > 200 and rgb[2] > 200
 
 def random_boolean(tendency = False):
   if tendency:
@@ -93,5 +93,7 @@ class Filters(Enum):
   GLITCHY_CONSTANT = 2
   GLITCHY_CONSTANT_DOWN_ON_WHITE = 3
   GLITCHY_CONSTANT_DOWN_ON_BLACK = 4
-  RANDOM_PIXELS = 5
-  FIREFLIES = 6
+  GLITCHY_RANDOM_DOWN_ON_WHITE = 5
+  GLITCHY_RANDOM_DOWN_ON_BLACK = 6
+  RANDOM_PIXELS = 7
+  FIREFLIES = 8

@@ -8,8 +8,10 @@ from utils import set_pixel, is_white, is_black, random_boolean, Filters, find_n
 # General settings
 image_path = "test5.png"
 image_color_space = "RGB"
-filter = Filters.GLITCHY_CONSTANT_DOWN_ON_BLACK
+filter = Filters.GLITCHY_RANDOM_DOWN_ON_BLACK
 log_progress = True
+black_threshold = 50
+white_threshold = 200
 
 # Fireflies settings
 fireflies_min_distance = 10
@@ -51,14 +53,24 @@ for y in range(height):
         if random_boolean(True):
           modifications.append((y, x, image_array[y - 2, x]))
           modifications.append((y + 2, x, pixel_rgb))
-
+          
+      elif filter == Filters.GLITCHY_RANDOM_DOWN_ON_WHITE:
+        if is_white(pixel_rgb, white_threshold) and random_boolean(True):
+          modifications.append((y, x, image_array[y - 2, x]))
+          modifications.append((y + 2, x, pixel_rgb))
+        
+      elif filter == Filters.GLITCHY_RANDOM_DOWN_ON_BLACK:
+        if is_black(pixel_rgb, black_threshold) and random_boolean(True):
+          modifications.append((y, x, image_array[y - 2, x]))
+          modifications.append((y + 2, x, pixel_rgb))
+        
       elif filter == Filters.GLITCHY_CONSTANT_DOWN_ON_WHITE:
-        if is_white(pixel_rgb):
+        if is_white(pixel_rgb, white_threshold):
           modifications.append((y, x, image_array[y - 1, x]))
           modifications.append((y + 1, x, pixel_rgb))
 
       elif filter == Filters.GLITCHY_CONSTANT_DOWN_ON_BLACK:
-        if is_black(pixel_rgb):
+        if is_black(pixel_rgb, black_threshold):
           modifications.append((y, x, image_array[y - 1, x]))
           modifications.append((y + 1, x, pixel_rgb))
 
