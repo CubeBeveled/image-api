@@ -20,6 +20,9 @@ fireflies_min_distance = 10
 animate = False
 modifications_per_frame = 1000
 frame_output_folder = "frames"
+
+# Animation to video settings
+convert_frames_to_video = False
 output_filename = "animation.mp4"
 output_framerate = 30
 
@@ -126,7 +129,7 @@ for (y, x, rgb) in modifications:
     if processed_percentage % 1 == 0:
       print(f"Processed {processed_percentage}%", end="\r")
 
-if animate: 
+if animate and convert_frames_to_video:
   video_from_image_sequence(frame_output_folder, output_filename, output_framerate)
 else:
   print("\nShowing")
