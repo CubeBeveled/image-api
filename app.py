@@ -1,4 +1,3 @@
-import os
 from flask import Flask, request, send_file, redirect
 from endpoints import random_math, random_word, wanted, welcomecard, sharpen, smooth, enhance, contour, find_edges, random_sentence
 
@@ -138,4 +137,4 @@ def generate_sentence():
     return random_sentence.generate(length)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=int(os.environ.get("PORT", 8000)))
+    app.run(host="0.0.0.0", debug=False, port=int(8000))
